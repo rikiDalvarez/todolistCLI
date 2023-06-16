@@ -1,20 +1,13 @@
-const { timeStamp } = require("console");
-const fs = require("fs");
+
 const path = require("path");
+const { createFile } = require('./utils/createFile.js');
 
 const args = process.argv;
 
 const todoFilePath = path.join(__dirname, 'todo.txt');
 
-if (!fs.existsSync(todoFilePath)) {
-	let createStream = fs.createWriteStream(todoFilePath);
-	createStream.end();
-}
 
-if (!fs.existsSync(todoFilePath)) {
-	let createStream = fs.createWriteStream('done.txt');
-	createStream.end();
-}
+createFile(todoFilePath);
 
 const logAppCommands = () => {
 	const text = `
@@ -29,11 +22,10 @@ const logAppCommands = () => {
 	console.log(text)
 }
 
-logAppCommands();
 
 const addTodo = (todo) => {
 	let timeStamp = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-	let todoToAdd = todo + " " + timeStamp + '\n';
+	let todoToAdd = todo + " " + timeStamp;
 	fs.appendFileSync(todoFilePath, todoToAdd + '\n');
 	console.log('Added todo: "' + todo + '"');
 }
@@ -76,30 +68,45 @@ const dropAllTodos = () => {
 	console.log('All todos deleted');
 }
 
-
-if (args[2] === "add") {
-	addTodo(args[3])
-}
-if (args[2] === "delete") {
-	deleteTodo(args[3])
-}
-if (args[2] === "help") {
-	logAppCommands()
-}
-if (args[2] === "ls") {
-	listTodos()
-}
-if (args[2] === "done") {
-	markTodoDone(args[3])
-}
-if (args[2] === "report") {
-	report()
-}
-if (args[2] === "drop") {
-	dropAllTodos()
+const todoMethods = {
+	add: addTodo,
+	delete: deleteTodo,
+	list: listTodos,
+	done: markTodoDone,
+	report: report,
+	drop: dropAllTodos,
+	help: logAppCommands
 }
 
 
+const todoHandler = (args) => {
+	switch (args[2]) {
+		case "add":
+			todoMethods.add(args[3])
+			break;
+		case "delete":
+			todoMethods.delete(args[3])
+			break;
+		case "help":
+			todoMethods.help()
+			break;
+		case "ls":
+			todoMethods.list()
+			break;
+		case "done":
+			todoMethods.done(args[3])
+			break;
+		case "report":
+			todoMethods.report()
+			break;
+		case "drop":
+			todoMethods.drop()
+			break;
+		default:
+			console.log("Please enter a valid command");
+			logAppCommands();
+	}
+}
 
-
+todoHandler(args);
 
