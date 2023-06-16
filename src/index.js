@@ -1,27 +1,10 @@
-
+const { logAppCommands } = require('./utils/commands.js');
 const path = require("path");
+const fs = require("fs");
 const { createFile } = require('./utils/createFile.js');
-
 const args = process.argv;
-
 const todoFilePath = path.join(__dirname, 'todo.txt');
-
-
 createFile(todoFilePath);
-
-const logAppCommands = () => {
-	const text = `
-	 - add = add new todo
-	 - ls = list all todos
-	 - del = delete a todo
-	 - done = mark a todo as done
-	 - help = show all commands
-	 - report = show report
-	 - drop = delete all todos
-	 `
-	console.log(text)
-}
-
 
 const addTodo = (todo) => {
 	let timeStamp = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
@@ -68,39 +51,28 @@ const dropAllTodos = () => {
 	console.log('All todos deleted');
 }
 
-const todoMethods = {
-	add: addTodo,
-	delete: deleteTodo,
-	list: listTodos,
-	done: markTodoDone,
-	report: report,
-	drop: dropAllTodos,
-	help: logAppCommands
-}
-
-
 const todoHandler = (args) => {
 	switch (args[2]) {
 		case "add":
-			todoMethods.add(args[3])
+			addTodo(args[3]);
 			break;
 		case "delete":
-			todoMethods.delete(args[3])
+			deleteTodo(args[3]);
 			break;
 		case "help":
-			todoMethods.help()
+			logAppCommands();
 			break;
 		case "ls":
-			todoMethods.list()
+			listTodos();
 			break;
 		case "done":
-			todoMethods.done(args[3])
+			markTodoDone(args[3]);
 			break;
 		case "report":
-			todoMethods.report()
+			report();
 			break;
 		case "drop":
-			todoMethods.drop()
+			dropAllTodos();
 			break;
 		default:
 			console.log("Please enter a valid command");
