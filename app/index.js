@@ -5,7 +5,6 @@ const { createFile } = require('./utils/createFile.js');
 const args = process.argv;
 const todoFilePath = path.join(__dirname, 'todo.txt');
 const doneFilePath = path.join(__dirname, 'done.txt');
-createFile(__dirname);
 
 const addTodo = (todo) => {
 	let timeStamp = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
@@ -54,7 +53,8 @@ const dropAllTodos = () => {
 	console.log('All todos deleted');
 }
 
-const todoHandler = (args) => {
+const todoHandler = async (args) => {
+	await createFile(__dirname);
 	switch (args[2]) {
 		case "add":
 			addTodo(args[3]);
